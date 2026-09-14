@@ -76,10 +76,14 @@ export default {
   },
   gasReporter: {
     currency: "USD",
-    coinmarketcap: getCoinMarketCapApiKey(),
-    token: "MATIC",
-    gasPriceApi:
-      "https://api.polygonscan.com/api?module=proxy&action=eth_gasPrice"
+    coinmarketcap: getCoinMarketCapApiKey(), // live POL price
+    token: "POL", // MATIC was renamed to POL; CoinMarketCap returns no price for MATIC
+    // Live Polygon gas price needs an Etherscan API key (old api.polygonscan.com is gone)
+    ...(getEtherscanApiKey()
+      ? {
+          gasPriceApi: `https://api.etherscan.io/v2/api?chainid=137&module=proxy&action=eth_gasPrice&apikey=${getEtherscanApiKey()}`
+        }
+      : { gasPrice: 30 }) // gwei, typical Polygon PoS minimum
   },
   typechain: {
     outDir: "typechain"
